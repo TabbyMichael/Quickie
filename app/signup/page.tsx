@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Apple, ArrowLeft, Github } from "lucide-react"
+import { ArrowLeft, Github, Phone, Mail } from "lucide-react"
 import Link from "next/link"
+import { FcGoogle } from "react-icons/fc"
+import { PhoneSignIn } from "@/components/auth/phone-sign-in"
 
 export default function SignupPage() {
   return (
@@ -27,13 +29,10 @@ export default function SignupPage() {
         <CardContent className="space-y-4">
           <div className="grid w-full gap-4">
             <Button variant="outline" className="w-full">
-              <Github className="mr-2 h-4 w-4" />
+              <FcGoogle className="mr-2 h-4 w-4" />
               Sign up with Google
             </Button>
-            <Button variant="outline" className="w-full">
-              <Apple className="mr-2 h-4 w-4" />
-              Sign up with Apple
-            </Button>
+            <PhoneSignIn mode="signup" />
           </div>
           
           <div className="relative">

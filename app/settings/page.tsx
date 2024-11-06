@@ -1,137 +1,234 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { 
+  Bell, 
+  Shield, 
+  User, 
+  Lock, 
+  Moon, 
+  Sun, 
+  LogOut, 
+  Trash2,
+  ChevronRight
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
-const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
-  bio: z.string().max(500, {
-    message: "Bio must not be longer than 500 characters.",
-  }),
-  age: z.string().regex(/^\d+$/, {
-    message: "Please enter a valid age.",
-  }),
-  location: z.string().min(2, {
-    message: "Please enter a valid location.",
-  }),
-})
+const settingsSections = [
+  {
+    title: "Account",
+    icon: User,
+    items: [
+      {
+        label: "Edit Profile",
+        href: "/settings/profile",
+      },
+      {
+        label: "Change Password",
+        href: "/settings/password",
+      },
+      {
+        label: "Email Notifications",
+        href: "/settings/notifications",
+      },
+    ],
+  },
+  {
+    title: "Privacy",
+    icon: Shield,
+    items: [
+      {
+        label: "Profile Visibility",
+        href: "/settings/privacy",
+      },
+      {
+        label: "Blocked Users",
+        href: "/settings/blocked",
+      },
+      {
+        label: "Data & Privacy",
+        href: "/settings/data",
+      },
+    ],
+  },
+  {
+    title: "Notifications",
+    icon: Bell,
+    items: [
+      {
+        label: "Push Notifications",
+        href: "/settings/push-notifications",
+      },
+      {
+        label: "Email Preferences",
+        href: "/settings/email-preferences",
+      },
+    ],
+  },
+  {
+    title: "Security",
+    icon: Lock,
+    items: [
+      {
+        label: "Two-Factor Authentication",
+        href: "/settings/2fa",
+      },
+      {
+        label: "Active Sessions",
+        href: "/settings/sessions",
+      },
+    ],
+  },
+]
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
+export default function SettingsPage() {
+  const router = useRouter()
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-export default function SettingsProfilePage() {
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      username: "",
-      bio: "",
-      age: "",
-      location: "",
-    },
-  })
-
-  function onSubmit(data: ProfileFormValues) {
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been updated successfully.",
-    })
+  const handleLogout = () => {
+    // Handle logout logic
+    router.push("/login")
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Profile</h3>
-        <p className="text-sm text-muted-foreground">
-          Update your personal information and how others see you.
-        </p>
+    <div className="container max-w-2xl mx-auto py-8 px-4">
+      <h1 className="text-3xl font-bold mb-8">Settings</h1>
+
+      {/* Settings Sections */}
+      <div className="space-y-6">
+        {settingsSections.map((section) => (
+          <Card key={section.title}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <section.icon className="h-5 w-5" />
+                {section.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {section.items.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => router.push(item.href)}
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <span>{item.label}</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+
+        {/* Appearance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {theme === "light" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+              Appearance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="dark-mode">Dark Mode</Label>
+              <Switch
+                id="dark-mode"
+                checked={theme === "dark"}
+                onCheckedChange={(checked) =>
+                  setTheme(checked ? "dark" : "light")
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Account Actions */}
+        <Card className="border-red-200 dark:border-red-800">
+          <CardHeader>
+            <CardTitle className="text-red-500">Danger Zone</CardTitle>
+            <CardDescription>
+              These actions are irreversible. Please proceed with caution.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={handleLogout}
+            >
+              <span className="flex items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+
+            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Delete Account
+                  </span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete Account</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete your
+                    account and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      // Handle account deletion
+                      setDeleteDialogOpen(false)
+                    }}
+                  >
+                    Delete Account
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
       </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="Your display name" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Tell us about yourself"
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Write a brief description about yourself.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input placeholder="Your age" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Location</FormLabel>
-                <FormControl>
-                  <Input placeholder="Your location" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Update profile</Button>
-        </form>
-      </Form>
     </div>
   )
 }
