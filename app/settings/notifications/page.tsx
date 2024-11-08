@@ -13,7 +13,7 @@ import {
   FormLabel,
 } from "@/components/ui/form"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { Card, CardContent } from "@/components/ui/card"
 import { Bell, Heart, MessageCircle, Star } from "lucide-react"
 

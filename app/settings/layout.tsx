@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { Separator } from "@/components/ui/separator"
 import { SidebarNav } from "@/components/settings/sidebar-nav"
+import { User, Lock, Bell } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Settings - Quickie",
@@ -8,6 +9,21 @@ export const metadata: Metadata = {
 }
 
 const sidebarNavItems = [
+  {
+    title: "Edit Profile",
+    href: "/settings/edit-profile",
+    icon: <User className="h-5 w-5" />,
+  },
+  {
+    title: "Change Password",
+    href: "/settings/change-password",
+    icon: <Lock className="h-5 w-5" />,
+  },
+  {
+    title: "Email Notifications",
+    href: "/settings/email-notifications",
+    icon: <Bell className="h-5 w-5" />,
+  },
   {
     title: "Profile",
     href: "/settings",
