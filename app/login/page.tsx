@@ -118,9 +118,11 @@ export default function LoginPage() {
           </div>
           <p className="text-sm text-center text-gray-500 dark:text-gray-400">
             Dont have an account?{" "}
-            <Link href="/signup" className="text-pink-500 hover:text-pink-600">
-              Sign up
-            </Link>
+            <Button asChild>
+              <Link href="/signup">
+                Sign Up
+              </Link>
+            </Button>
           </p>
         </CardFooter>
       </Card>

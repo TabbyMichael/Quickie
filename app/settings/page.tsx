@@ -32,6 +32,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { signOut } from "next-auth/react"
+import { toast } from "sonner"
+import { useTheme } from "next-themes"
+import Link from "next/link"
 
 const settingsSections = [
   {
@@ -102,12 +106,35 @@ const settingsSections = [
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const { theme, setTheme } = useTheme()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  const handleLogout = () => {
-    // Handle logout logic
-    router.push("/login")
+  const handleLogout = async () => {
+    try {
+      await signOut({ redirect: true, callbackUrl: "/login" })
+    } catch (error) {
+      console.error("Logout failed:", error)
+      toast.error("There was an issue logging out. Please try again.")
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch("/api/settings/delete-account", {
+        method: "POST",
+      })
+
+      if (response.ok) {
+        toast.success("Account Deleted. Your account has been deleted successfully.")
+        // Redirect to home or signup page after deletion
+        router.push("/signup")
+      } else {
+        throw new Error("Failed to delete account")
+      }
+    } catch (error) {
+      console.error("Delete account failed:", error)
+      toast.error("There was an issue deleting your account. Please try again.")
+    }
   }
 
   return (
@@ -126,14 +153,14 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               {section.items.map((item) => (
-                <button
+                <Link
                   key={item.label}
-                  onClick={() => router.push(item.href)}
+                  href={item.href}
                   className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   <span>{item.label}</span>
                   <ChevronRight className="h-4 w-4" />
-                </button>
+                </Link>
               ))}
             </CardContent>
           </Card>
@@ -216,10 +243,7 @@ export default function SettingsPage() {
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={() => {
-                      // Handle account deletion
-                      setDeleteDialogOpen(false)
-                    }}
+                    onClick={handleDeleteAccount}
                   >
                     Delete Account
                   </Button>

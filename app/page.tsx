@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Heart, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 export default function Home() {
   return (
@@ -23,22 +25,15 @@ export default function Home() {
           </p>
           
           <div className="flex gap-4">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
-              asChild
-            >
-              <Link href="/signup">Get Started</Link>
+            <Button asChild>
+              <Link href="/signup">
+                Get Started
+              </Link>
             </Button>
             
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2"
-              asChild
-            >
-              <Link href="/login">Sign In</Link>
-            </Button>
+            <Link href="/login" className={cn(buttonVariants({ size: 'lg', variant: 'outline', className: "border-2" }))}>
+              Sign In
+            </Link>
           </div>
         </div>
 
