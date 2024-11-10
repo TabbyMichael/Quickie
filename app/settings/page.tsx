@@ -32,6 +32,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { useTheme } from 'next-themes'
 
 const settingsSections = [
   {
@@ -102,7 +103,7 @@ const settingsSections = [
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const { theme, setTheme } = useTheme()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const handleLogout = () => {
