@@ -32,6 +32,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { useTheme } from 'next-themes'
 
 const settingsSections = [
   {
@@ -102,7 +103,7 @@ const settingsSections = [
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const { theme, setTheme } = useTheme()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const handleLogout = () => {
@@ -113,6 +114,17 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-2xl mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8">Settings</h1>
+
+      {/* Dark Mode Toggle Button */}
+      <div className="flex items-center space-x-2">
+        <Sun className="h-5 w-5 text-yellow-500" />
+        <Switch
+          checked={theme === 'dark'}
+          onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+          id="dark-mode-toggle"
+        />
+        <Moon className="h-5 w-5 text-gray-800" />
+      </div>
 
       {/* Settings Sections */}
       <div className="space-y-6">
@@ -138,32 +150,6 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         ))}
-
-        {/* Appearance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {theme === "light" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-              Appearance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="dark-mode">Dark Mode</Label>
-              <Switch
-                id="dark-mode"
-                checked={theme === "dark"}
-                onCheckedChange={(checked) =>
-                  setTheme(checked ? "dark" : "light")
-                }
-              />
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Account Actions */}
         <Card className="border-red-200 dark:border-red-800">

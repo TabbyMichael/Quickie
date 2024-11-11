@@ -1,11 +1,16 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { useTheme as useNextTheme } from "next-themes"
+'use client';
+
+import { ThemeProvider as NextThemeProvider } from 'next-themes';
 
 export function ThemeProvider({
   children,
   ...props
 }: {
-  children: React.ReactNode
-} & Parameters<typeof useNextTheme>[0]) {
-  return <>{children}</>
+  children: React.ReactNode;
+} & Parameters<typeof NextThemeProvider>[0]) {
+  return (
+    <NextThemeProvider {...props}>
+      {children}
+    </NextThemeProvider>
+  );
 }
