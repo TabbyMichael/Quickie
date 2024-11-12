@@ -1,33 +1,42 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Heart, X } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-// Mock data - in a real app this would come from your API
-const profiles = [
-  {
-    id: 1,
-    name: "Sarah, 25",
-    bio: "Adventure seeker & coffee enthusiast ☕️",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60",
-    distance: "3 miles away",
-  },
-  {
-    id: 2,
-    name: "Michael, 28",
-    bio: "Photographer 📸 | Dog lover 🐕",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop&q=60",
-    distance: "5 miles away",
-  },
-  // Add more mock profiles as needed
-]
+import { db } from "../firebase"
+import { collection, getDocs } from "firebase/firestore"
 
 export default function DashboardPage() {
   const [currentProfile, setCurrentProfile] = useState(0)
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null)
+  const [profiles, setProfiles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "profiles"))
+        const profilesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        setProfiles(profilesData)
+      } catch (err) {
+        console.error("Error fetching profiles:", err)
+        if (err instanceof Error) {
+          setError(err)
+        } else {
+          setError(new Error("An unexpected error occurred"))
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProfiles()
+  }, [])
+
+  if (loading) return <div>Loading profiles...</div>
+  if (error) return <div>Error loading profiles. Please try again later.</div>
 
   const handleSwipe = (direction: "left" | "right") => {
     setSwipeDirection(direction)
