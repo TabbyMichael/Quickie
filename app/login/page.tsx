@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Github, Phone, Mail } from "lucide-react"
@@ -17,10 +17,21 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FcGoogle } from "react-icons/fc"
 import { PhoneSignIn } from "@/components/auth/phone-sign-in"
+import { auth, googleProvider } from "../firebase" // Import auth and provider
+import { signInWithPopup } from "firebase/auth" // Import signInWithPopup
+import { useAuth } from "@/context/AuthContext" // Add this import
+import { toast } from "@/hooks/use-toast" // Add this import
 
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const { user, loading } = useAuth() // Add this line
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard')
+    }
+  }, [user, loading, router])
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -43,6 +54,39 @@ export default function LoginPage() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true)
+      const result = await signInWithPopup(auth, googleProvider)
+      console.log("Google Sign-In Successful:", result.user)
+      router.push("/dashboard")
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500 mx-auto"></div>
+          <p className="mt-4 text-gray-500">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (user) {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -61,7 +105,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid w-full gap-4">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
               <FcGoogle className="mr-2 h-4 w-4" />
               Sign in with Google
             </Button>
