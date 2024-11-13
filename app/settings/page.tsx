@@ -11,7 +11,8 @@ import {
   Sun, 
   LogOut, 
   Trash2,
-  ChevronRight
+  ChevronRight,
+  Crown
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -95,6 +96,20 @@ const settingsSections = [
       {
         label: "Active Sessions",
         href: "/settings/sessions",
+      },
+    ],
+  },
+  {
+    title: "Premium",
+    icon: Crown,
+    items: [
+      {
+        label: "Upgrade to Premium",
+        href: "/premium",
+      },
+      {
+        label: "Premium Features",
+        href: "/premium#features",
       },
     ],
   },

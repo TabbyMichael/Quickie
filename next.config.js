@@ -8,6 +8,12 @@ const nextConfig = {
     unoptimized: true,
     domains: ['images.unsplash.com'],
   },
+  experimental: {
+    // ... other experimental options
+  },
+  webServer: {
+    port: 3011
+  }
 };
 
 module.exports = nextConfig;
