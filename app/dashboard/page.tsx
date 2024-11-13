@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { Heart, X, Loader2 } from "lucide-react"
+import { Heart, X, Loader2, Crown } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { db } from "../firebase"
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { Firestore } from "firebase/firestore" // Import the Firestore type
 import { useSwipeable } from "react-swipeable"
 import { toast } from "@/hooks/use-toast"
+import Link from "next/link"
 
 // Define the Profile type
 type Profile = {
@@ -289,7 +290,7 @@ export default function DashboardPage() {
     };
 
     fetchProfiles();
-  }, []);
+  }, [profiles.length]);
 
   if (loading) {
     return (
@@ -398,6 +399,15 @@ export default function DashboardPage() {
             
             {/* Profile info overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 text-white">
+              {/* Premium badge/button */}
+              <Link 
+                href="/premium" 
+                className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full flex items-center gap-2 hover:from-yellow-500 hover:to-yellow-700 transition-all"
+              >
+                <Crown className="h-4 w-4" />
+                <span className="text-sm font-medium">Go Premium</span>
+              </Link>
+
               <div className="flex items-center gap-2 mb-1">
                 <h2 className="text-2xl font-semibold">{profile.name}</h2>
                 <span className="text-xl">{profile.age}</span>
